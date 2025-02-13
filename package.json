@@ -1,0 +1,37 @@
+{
+  "name": "ghwin-notifications",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run prebuild && next dev --port 3010 --turbopack --experimental-https",
+    "prebuild": "node sw-env-vars.js",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.4",
+    "@mui/material": "^6.4.4",
+    "firebase": "^10.13.2",
+    "firebase-admin": "^13.1.0",
+    "next": "15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.54.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv": "^16.4.7",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.7",
+    "postcss": "^8",
+    "prettier": "^3.5.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
