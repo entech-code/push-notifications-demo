@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'GHWIN App',
-    short_name: 'GHWIN',
-    description: 'GHWIN App',
+    name: 'Push Notifications Demo App',
+    short_name: 'PND',
+    description: 'Demo of Push Notifications',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
