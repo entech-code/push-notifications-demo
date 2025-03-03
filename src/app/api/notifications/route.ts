@@ -7,7 +7,7 @@ if (!admin.apps.length) {
       projectId: process.env.FIREBASE_PROJECT_ID,
       privateKey: (process.env.FIREBASE_PRIVATE_KEY || "").replace(
         /\\n/g,
-        "\n",
+        "\n"
       ),
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
     }),
@@ -28,11 +28,12 @@ export async function POST(request: Request) {
       token: body.firebaseToken,
     };
     await admin.messaging().send(payload);
+    return NextResponse.json({ message: "Notification sent successfully." });
   } catch (error: any) {
     console.error("Error sending notification:", error);
     return NextResponse.json(
       { error: error.message, details: error }, // Log full error details
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

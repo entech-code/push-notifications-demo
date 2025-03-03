@@ -25,7 +25,7 @@ messaging.onBackgroundMessage(messaging, async payload => {
   const { notification, data } = payload;
   const notificationOptions = {
     body: notification?.body,
-    icon: notification?.icon || '/images/ghwin-logo.svg', // Default icon
+    icon: notification?.icon || '/logo.svg', // Default icon
     data: { url: data?.url || '/' }, // Store URL in notification data
   };
 

@@ -1,15 +1,17 @@
-'use client';
+"use client";
 import { Alert, Button, Slide, SlideProps, Snackbar } from "@mui/material";
 import { getToken } from "firebase/messaging";
 import { useContext, useState } from "react";
 import { PushNotificationsContext } from "@/components/notifications/PushNotificationsProvider";
 import { useCurrentUser } from "@/utils/useCurrentUser";
+import { DeviceTypes, isPWA, useDevice } from "@/utils/useDevice";
 
 export const SubscribeButton: React.FC = () => {
   const messaging = useContext(PushNotificationsContext);
   const { user } = useCurrentUser();
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState<"success" | "error">("success");
+  const device = useDevice();
 
   const handleClose = () => {
     setOpen(false);
@@ -18,6 +20,10 @@ export const SubscribeButton: React.FC = () => {
 
   const handleTokenSubmit = async () => {
     try {
+      if (device === DeviceTypes.IOS && !isPWA())
+        throw new Error(
+          'In IPhone you must install the app first, by clicking on Share button in browser and selecting “Add to Home Screen"'
+        );
       if (messaging) {
         if (Notification.permission !== "granted") {
           const result = await Notification.requestPermission();
@@ -36,7 +42,7 @@ export const SubscribeButton: React.FC = () => {
             "/firebase-messaging-sw.js",
             {
               scope: "/",
-            },
+            }
           );
         }
 
@@ -74,8 +80,8 @@ export const SubscribeButton: React.FC = () => {
       >
         <Alert onClose={handleClose} severity={alertType} variant="filled">
           {alertType === "success"
-            ? "Operation successful!"
-            : "Operation failed!"}
+            ? "Subscription successful!"
+            : "Subscription failed!"}
         </Alert>
       </Snackbar>
     </>

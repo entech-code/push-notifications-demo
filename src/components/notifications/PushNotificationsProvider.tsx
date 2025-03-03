@@ -45,7 +45,7 @@ const PushNotificationsProvider: React.FC<PropsWithChildren> = ({
             payload?.notification?.title || "",
             {
               body: payload.notification?.body,
-              icon: "/images/ghwin-logo.svg",
+              icon: "/logo.svg",
               data: { url },
             },
           );
