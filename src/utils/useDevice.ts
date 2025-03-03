@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 
 export enum DeviceTypes {
@@ -12,29 +13,37 @@ export function useDevice() {
   const [deviceType, setDeviceType] = useState<DeviceTypes>(
     DeviceTypes.UNKNOWN
   );
-  const getDeviceType = () => {
-    const userAgent = navigator.userAgent.toLowerCase();
-
-    if (/iphone|ipad|ipod/.test(userAgent)) {
-      return DeviceTypes.IOS;
-    }
-    if (/android/.test(userAgent)) {
-      return DeviceTypes.ANDROID;
-    }
-    if (/windows/.test(userAgent)) {
-      return DeviceTypes.WINDOWS;
-    }
-    if (/macintosh|mac os x/.test(userAgent)) {
-      return DeviceTypes.MAC;
-    }
-    return DeviceTypes.UNKNOWN;
-  };
 
   useEffect(() => {
-    setDeviceType(getDeviceType());
-  }, [navigator.userAgent]);
+    if (typeof window !== "undefined") {
+      setDeviceType(getDeviceType());
+    }
+  }, []);
 
   return deviceType;
+}
+
+function getDeviceType(): DeviceTypes {
+  // Add check for server-side rendering
+  if (typeof window === "undefined") {
+    return DeviceTypes.UNKNOWN; // Default value for SSR
+  }
+
+  const ua = navigator.userAgent;
+
+  if (/iphone|ipad|ipod/.test(ua)) {
+    return DeviceTypes.IOS;
+  }
+  if (/android/.test(ua)) {
+    return DeviceTypes.ANDROID;
+  }
+  if (/windows/.test(ua)) {
+    return DeviceTypes.WINDOWS;
+  }
+  if (/macintosh|mac os x/.test(ua)) {
+    return DeviceTypes.MAC;
+  }
+  return DeviceTypes.UNKNOWN;
 }
 
 export const isPWA = () =>

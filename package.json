@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run prebuild && next dev --port 3010 --turbopack --experimental-https",
+    "dev": "npm run prebuild && next dev --port 8080 --turbopack --experimental-https",
     "prebuild": "node sw-env-vars.js",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start -p 8080", 
+    "lint": "next lint",
+    "recreate-output": "rm -rf output && mkdir -p output && cp -r .next package.json public Procfile output/ && cd output && zip -r ../deployment.zip .",
+    "aws-build": "rm -rf .next && npm run prebuild && npm run build && npm run recreate-output"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
