@@ -1,10 +1,49 @@
 "use client";
-import { Alert, Button, Slide, SlideProps, Snackbar } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Slide,
+  SlideProps,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import { getToken } from "firebase/messaging";
 import { useContext, useState } from "react";
 import { PushNotificationsContext } from "@/components/notifications/PushNotificationsProvider";
 import { useCurrentUser } from "@/utils/useCurrentUser";
 import { DeviceTypes, isPWA, useDevice } from "@/utils/useDevice";
+import CircularProgress, {
+  CircularProgressProps,
+} from "@mui/material/CircularProgress";
+
+function CircularProgressWithLabel(
+  props: CircularProgressProps & { value: number }
+) {
+  return (
+    <Box sx={{ position: "relative", display: "inline-flex" }}>
+      <CircularProgress variant="determinate" {...props} />
+      <Box
+        sx={{
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          position: "absolute",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Typography
+          variant="caption"
+          component="div"
+          sx={{ color: "text.secondary", fontSize: "12px" }}
+        >{`${Math.round(props.value)}`}</Typography>
+      </Box>
+    </Box>
+  );
+}
 
 export const SubscribeButton: React.FC = () => {
   const messaging = useContext(PushNotificationsContext);
@@ -12,7 +51,8 @@ export const SubscribeButton: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState<"success" | "error">("success");
   const device = useDevice();
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const handleClose = () => {
     setOpen(false);
     setAlertType("success");
@@ -25,10 +65,13 @@ export const SubscribeButton: React.FC = () => {
           'In IPhone you must install the app first, by clicking on Share button in browser and selecting “Add to Home Screen"'
         );
       if (messaging) {
+        setIsLoading(true);
         if (Notification.permission !== "granted") {
+          setProgress(10);
           const result = await Notification.requestPermission();
+          setProgress(20);
           if (result !== "granted")
-            return alert("Notifications are not allowed.");
+            throw new Error("Notifications are not allowed.");
         }
 
         if (!("serviceWorker" in navigator)) {
@@ -36,7 +79,7 @@ export const SubscribeButton: React.FC = () => {
         }
 
         let registration = await navigator.serviceWorker.getRegistration("/");
-
+        setProgress(40);
         if (!registration) {
           registration = await navigator.serviceWorker.register(
             "/firebase-messaging-sw.js",
@@ -45,28 +88,40 @@ export const SubscribeButton: React.FC = () => {
             }
           );
         }
+        setProgress(60);
 
         await navigator.serviceWorker.ready;
-
+        setProgress(80);
         const firebaseToken = await getToken(messaging, {
           vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
           serviceWorkerRegistration: registration,
         });
-
+        setProgress(100);
         if (user) user.data.firebaseToken = firebaseToken;
         setOpen(true);
+        setIsLoading(false);
+        setProgress(0);
       }
     } catch (err: any) {
       console.error(err.message);
       alert(err.message);
       setAlertType("error");
       setOpen(true);
+      setIsLoading(false);
+      setProgress(0);
     }
   };
 
   return (
     <>
-      <Button variant={"contained"} onClick={handleTokenSubmit}>
+      <Button
+        variant={"contained"}
+        onClick={handleTokenSubmit}
+        className="flex items-center gap-2"
+      >
+        {isLoading && (
+          <CircularProgressWithLabel size={20} color="secondary" value={progress} />
+        )}
         Subscribe to Notifications
       </Button>
       <Snackbar
