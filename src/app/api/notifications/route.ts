@@ -1,19 +1,20 @@
 import { NextResponse } from "next/server";
 import admin from "firebase-admin";
 
-console.log("FIREBASE_PROJECT_ID", process.env.FIREBASE_PROJECT_ID);
-console.log("FIREBASE_PRIVATE_KEY", process.env.FIREBASE_PRIVATE_KEY);
-console.log("FIREBASE_CLIENT_EMAIL", process.env.FIREBASE_CLIENT_EMAIL);
-
 if (!admin.apps.length) {
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+
+  if (!projectId || !privateKey || !clientEmail) {
+    throw new Error('Missing Firebase Admin credentials');
+  }
+
   admin.initializeApp({
     credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      privateKey: (process.env.FIREBASE_PRIVATE_KEY || "").replace(
-        /\\n/g,
-        "\n"
-      ),
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      projectId,
+      privateKey: privateKey.replace(/\\n/g, '\n'),
+      clientEmail,
     }),
   });
 }

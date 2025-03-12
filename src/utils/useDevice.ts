@@ -30,17 +30,16 @@ function getDeviceType(): DeviceTypes {
   }
 
   const ua = navigator.userAgent;
-
-  if (/iphone|ipad|ipod/.test(ua)) {
+  if (/iphone|ipad|ipod/i.test(ua)) {
     return DeviceTypes.IOS;
   }
-  if (/android/.test(ua)) {
+  if (/android/i.test(ua)) {
     return DeviceTypes.ANDROID;
   }
   if (/windows/.test(ua)) {
     return DeviceTypes.WINDOWS;
   }
-  if (/macintosh|mac os x/.test(ua)) {
+  if (/macintosh|mac os x/i.test(ua)) {
     return DeviceTypes.MAC;
   }
   return DeviceTypes.UNKNOWN;

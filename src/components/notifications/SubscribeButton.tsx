@@ -101,9 +101,11 @@ export const SubscribeButton: React.FC = () => {
         setOpen(true);
         setIsLoading(false);
         setProgress(0);
+      } else {
+        throw new Error("Messaging not initialized");
       }
     } catch (err: any) {
-      console.error(err.message);
+      console.log(err.message);
       alert(err.message);
       setAlertType("error");
       setOpen(true);

@@ -1,11 +1,11 @@
-console.log('[Firebase SW] Service Worker Loaded');
+console.log("[Firebase SW] Service Worker Loaded");
 importScripts(
   'https://www.gstatic.com/firebasejs/10.1.0/firebase-app-compat.js',
 );
 importScripts(
   'https://www.gstatic.com/firebasejs/10.1.0/firebase-messaging-compat.js',
 );
-importScripts('/sw-process-env.js');
+importScripts("/sw-process-env.js");
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,22 +16,22 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-console.log('[Firebase SW] Firebase Config:', firebaseConfig);
+console.log("[Firebase SW] Firebase Config:", firebaseConfig);
 
 const app = firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging(app);
 
-messaging.onBackgroundMessage(messaging, async payload => {
+messaging.onBackgroundMessage(messaging, async (payload) => {
   const { notification, data } = payload;
   const notificationOptions = {
     body: notification?.body,
-    icon: notification?.icon || '/logo.svg', // Default icon
-    data: { url: data?.url || '/' }, // Store URL in notification data
+    icon: notification?.icon || "/logo.svg", // Default icon
+    data: { url: data?.url || "/" }, // Store URL in notification data
   };
 
   await self.registration.showNotification(
     payload.notification.title,
-    notificationOptions,
+    notificationOptions
   );
 });
 
@@ -47,25 +47,25 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-self.addEventListener('notificationclick', event => {
-  console.log('[Firebase SW] Notification Clicked:', event);
+self.addEventListener("notificationclick", (event) => {
+  console.log("[Firebase SW] Notification Clicked:", event);
   event.notification.close();
 
   const url = event.notification.data?.url;
   if (url) {
     event.waitUntil(
       clients
-        .matchAll({ type: 'window', includeUncontrolled: true })
-        .then(clientList => {
+        .matchAll({ type: "window", includeUncontrolled: true })
+        .then((clientList) => {
           for (const client of clientList) {
-            if (client.url === url && 'focus' in client) {
+            if (client.url === url && "focus" in client) {
               return client.focus();
             }
           }
           if (clients.openWindow) {
             return clients.openWindow(url);
           }
-        }),
+        })
     );
   }
 });
